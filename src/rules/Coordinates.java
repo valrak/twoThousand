@@ -15,7 +15,7 @@ public class Coordinates {
 		this.x = x;
 		this.y = y;
 	}
-	
+		
 	public Coordinates(int[] coords) {
 		this.x = coords[X];
 		this.y = coords[Y];
@@ -41,5 +41,29 @@ public class Coordinates {
 		this.y = y;
 	}
 	
+	public void setCoordinates(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+	public void setCoordinates(int[] coord) {
+		x = coord[X];
+		y = coord[Y];
+	}
 	
+	public boolean equals(Object other) {
+		if (other == null || getClass() != other.getClass()) {
+			return false;
+		}
+		else {
+			Coordinates otherCoord = (Coordinates) other;
+			if (otherCoord.getX() == x && otherCoord.getY() == y) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public String toString() {
+		return "Coordinates x="+x+" y="+y;
+	}
 }

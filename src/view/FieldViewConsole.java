@@ -2,7 +2,7 @@ package view;
 
 import rules.Field;
 
-public class ConsoleView implements FieldView {
+public class FieldViewConsole implements FieldView {
 
 	@Override
 	public void displayField(Field field) {

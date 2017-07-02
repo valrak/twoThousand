@@ -13,25 +13,37 @@ public class Field {
 
 	private int maxX = 0;
 	private int maxY = 0;
+	
+	private enum MovementDecision {
+		CONTINUE, STOP, MERGE 
+	}
 
+	/**
+	 * Create playfield with these dimensions
+	 * @param maxX x axis dimension 
+	 * @param maxY y axis dimension
+	 */
 	public Field(int maxX, int maxY) {
 		this.maxX = maxX;
 		this.maxY = maxY;
-		field = new Tile[maxX][maxY];
+		field = new Tile[maxY][maxX];
 		clearField();
 	}
 
+	/**
+	 * Clear the playfield - all Tiles will be at default value
+	 */
 	public void clearField() {
 		for (int y = 0; y < maxY; y++) {
 			for (int x = 0; x < maxX; x++) {
-				field[x][y] = new Tile();
+				field[y][x] = new Tile();
 			}
 		}
 	}
 
 	public Tile getTile(int x, int y) {
 		try {
-			return field[x][y];
+			return field[y][x];
 		} catch (ArrayIndexOutOfBoundsException e) {
 			return null;
 		}
@@ -39,7 +51,7 @@ public class Field {
 	
 	public Tile getTile(Coordinates coord) {
 		try {
-			return field[coord.getX()][coord.getY()];
+			return field[coord.getY()][coord.getX()];
 		} catch (ArrayIndexOutOfBoundsException e) {
 			return null;
 		}
@@ -47,7 +59,7 @@ public class Field {
 
 	public boolean setTile(Coordinates coord, Tile tile) {
 		try {
-			field[coord.getX()][coord.getY()] = tile;
+			field[coord.getY()][coord.getX()] = tile;
 			return true;
 		} catch (ArrayIndexOutOfBoundsException e) {
 			return false;
@@ -56,29 +68,36 @@ public class Field {
 	
 	public boolean setTile(int x, int y, Tile tile) {
 		try {
-			field[x][y] = tile;
+			field[y][x] = tile;
 			return true;
 		} catch (ArrayIndexOutOfBoundsException e) {
 			return false;
 		}
 	}
 
-	// inserts random tile at field
-	// TODO: should do only at empty fields!
+	/**
+	 * Place new Tile to the playfield at random empty space
+	 * @param value of the new tile
+	 * @return Coordinates where the new tile was placed
+	 */
 	public Coordinates putInFieldAtRandom(int value) {
 		Coordinates coordinates = getRandomZeroCoord();
 		if (coordinates != null) {
-			field[coordinates.getX()][coordinates.getY()].setValue(value);
+			field[coordinates.getY()][coordinates.getX()].setValue(value);
 			return coordinates;
 		}
 		return null;
 	}
 
+	/**
+	 * Returns empty tile on the playfield by random
+	 * @return Coordinates of the empty tile (it's value = zero)
+	 */
 	public Coordinates getRandomZeroCoord() {
 		ArrayList<Coordinates> coordsList = new ArrayList<>();
 		for (int y = 0; y < maxY; y++) {
 			for (int x = 0; x < maxX; x++) {
-				Tile tile = field[x][y];
+				Tile tile = field[y][x];
 				if (tile.isZero()) {
 					Coordinates coord = new Coordinates(x, y);
 					coordsList.add(coord);
@@ -93,34 +112,98 @@ public class Field {
 		return randomKey;
 	}
 
-	// move tile to direction, movement ending when collision with other tile or
-	// boundary
-	public Coordinates moveTile(int[] coord, Direction direction) {
-		Coordinates coordinates = new Coordinates();
-		int[] potentialTarget = coord;
+	private MovementDecision doStopMovement(Coordinates targetCoord, int currentTileValue) {
+		Tile targetTile = getTile(targetCoord);
+		// empty space, continue with search
+		if (targetTile == null || targetTile.getValue() == 0) {
+			return MovementDecision.CONTINUE;
+		}
+		else {
+			// if both tiles are of same value, they will merge together
+			if (targetTile.getValue() == currentTileValue) {
+				return MovementDecision.MERGE;
+			}
+			// tile is occupied with something else
+			return MovementDecision.STOP;
+		}
+	}
+	
+	/**
+	 * Finds where tile can be moved by chosen direction.
+	 * @param coordinates coordinates of the tile to be moved
+	 * @param direction direction of the movement
+	 * @return Coordinates of the ending point of the tile movement
+	 */
+	public Coordinates getTargetMovement(Coordinates coordinates, Direction direction) {
+		Tile currentTile = getTile(coordinates);
+		Coordinates potentialTarget = new Coordinates(coordinates.getArray());
 		switch (direction) {
 		case UP:
-			for (int i = coord[Y]; i <= 0; i--) {
-				 
-				Tile targetSpace = getTile(coord[X], i);
-				// empty space
-				if (targetSpace == null) {
-					potentialTarget[X] = coord[X];
-					potentialTarget[Y] = i;
+			for (int i = coordinates.getY() - 1; i <= 0; i--) {
+				Coordinates targetCoord = new Coordinates(coordinates.getX(), i); 
+				MovementDecision decision = doStopMovement(targetCoord, currentTile.getValue());
+				if (decision == MovementDecision.CONTINUE) {
+					potentialTarget = targetCoord;
+				}
+				else if (decision == MovementDecision.MERGE) {
+					potentialTarget = targetCoord;
+					return potentialTarget;
+				}
+				else {
+					return potentialTarget;
 				}
 			}
-			break;
+			return potentialTarget;
 		case DOWN:
-			break;
+			for (int i = coordinates.getY() + 1; i >= maxY; i++) {
+				Coordinates targetCoord = new Coordinates(coordinates.getX(), i); 
+				MovementDecision decision = doStopMovement(targetCoord, currentTile.getValue());
+				if (decision == MovementDecision.CONTINUE) {
+					potentialTarget = targetCoord;
+				}
+				else if (decision == MovementDecision.MERGE) {
+					potentialTarget = targetCoord;
+					return potentialTarget;
+				}
+				else {
+					return potentialTarget;
+				}
+			}
+			return potentialTarget;
 		case LEFT:
-			break;
+			for (int i = coordinates.getX() - 1; i <= 0; i--) {
+				Coordinates targetCoord = new Coordinates(i, coordinates.getY()); 
+				MovementDecision decision = doStopMovement(targetCoord, currentTile.getValue());
+				if (decision == MovementDecision.CONTINUE) {
+					potentialTarget = targetCoord;
+				}
+				else if (decision == MovementDecision.MERGE) {
+					potentialTarget = targetCoord;
+					return potentialTarget;
+				}
+				else {
+					return potentialTarget;
+				}
+			}
+			return potentialTarget;
 		case RIGHT:
-			break;
-		default:
-			break;
-
+			for (int i = coordinates.getX() + 1; i <= maxX; i++) {
+				Coordinates targetCoord = new Coordinates(i, coordinates.getY()); 
+				MovementDecision decision = doStopMovement(targetCoord, currentTile.getValue());
+				if (decision == MovementDecision.CONTINUE) {
+					potentialTarget = targetCoord;
+				}
+				else if (decision == MovementDecision.MERGE) {
+					potentialTarget = targetCoord;
+					return potentialTarget;
+				}
+				else {
+					return potentialTarget;
+				}
+			}
+			return potentialTarget;
 		}
-		return coordinates;
+		return null;
 	}
 
 	public int getMaxX() {
