@@ -1,13 +1,14 @@
 package twoThousand;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 import constants.Constants.Direction;
 import models.Coordinates;
 import models.GameField;
-import models.Tile;
 import rules.Rules;
 import rules.RulesStandard;
 
@@ -74,4 +75,37 @@ public class RulesStandardTest {
 		targetMovement = rules.getTargetMovement(new Coordinates(1, 2), Direction.RIGHT, field);
 		assertEquals(new Coordinates(2, 2), targetMovement);
 	}
+	
+	@Test
+	public void testGenerateTile() {
+		GameField field = new GameField(4, 5);
+		Rules rules = new RulesStandard();
+		Coordinates tileCoordinates = rules.generateTile(field);
+		assertEquals(2, field.getTile(tileCoordinates).getValue());
+	}
+	
+	
+	@Test
+	public void testGetScore() {
+		GameField field = new GameField(4, 5);
+		Rules rules = new RulesStandard();
+		int score = rules.getScore(field);
+		assertEquals(0, score);
+		rules.generateTile(field);
+		score = rules.getScore(field);
+		assertEquals(2, score);
+		field = prepareField();
+		score = rules.getScore(field);
+		assertEquals(210, score);
+	}
+	
+	@Test
+	public void testIsLost() {
+		GameField field = new GameField(4, 5);
+		Rules rules = new RulesStandard();
+		assertFalse(rules.isLost(field));
+		field = prepareField();
+		assertTrue(rules.isLost(field));
+	}
 }
+

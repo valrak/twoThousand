@@ -41,8 +41,13 @@ public class RulesStandard implements Rules {
 
 	@Override
 	public boolean isLost(GameField field) {
-		// TODO Auto-generated method stub
-		return false;
+		LinkedHashMap<Coordinates, Tile> tiles = field.getTiles();
+		for (Coordinates key : tiles.keySet()) {
+			if (tiles.get(key).isZero()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
