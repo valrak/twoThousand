@@ -2,6 +2,8 @@ package models;
 
 import static constants.Constants.*;
 
+import java.util.Objects;
+
 public class Coordinates {
 	
 	private int x;
@@ -65,5 +67,9 @@ public class Coordinates {
 	
 	public String toString() {
 		return "Coordinates x="+x+" y="+y;
+	}
+	
+	public int hashCode() {
+		return Objects.hash(x, y);
 	}
 }

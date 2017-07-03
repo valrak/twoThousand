@@ -1,6 +1,7 @@
 package rules;
 
 import constants.Constants.Direction;
+import models.Coordinates;
 import models.GameField;
 
 /**
@@ -30,4 +31,11 @@ public interface Rules {
 	 */
 	public int getScore(GameField field);
 
+	/**
+	 * Finds where tile can be moved by chosen direction.
+	 * @param coordinates coordinates of the tile to be moved
+	 * @param direction direction of the movement
+	 * @return Coordinates of the ending point of the tile movement
+	 */
+	public Coordinates getTargetMovement(Coordinates coordinates, Direction direction);
 }

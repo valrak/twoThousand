@@ -2,6 +2,7 @@ package models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Random;
 
 import constants.Constants.Direction;
@@ -9,7 +10,7 @@ import constants.Constants.Direction;
 public class GameField {
 
 	private Tile[][] field;
-
+	
 	private int maxX = 0;
 	private int maxY = 0;
 	
@@ -94,13 +95,11 @@ public class GameField {
 	 */
 	public Coordinates getRandomZeroCoord() {
 		ArrayList<Coordinates> coordsList = new ArrayList<>();
-		for (int y = 0; y < maxY; y++) {
-			for (int x = 0; x < maxX; x++) {
-				Tile tile = field[y][x];
-				if (tile.isZero()) {
-					Coordinates coord = new Coordinates(x, y);
-					coordsList.add(coord);
-				}
+		LinkedHashMap<Coordinates, Tile> tiles = getTiles();
+		for (Coordinates coord : tiles.keySet()) {
+			Tile tile = tiles.get(coord);
+			if (tile.isZero()) {
+				coordsList.add(coord);
 			}
 		}
 		if (coordsList.isEmpty()) {
@@ -206,18 +205,27 @@ public class GameField {
 	}
 	
 	public void moveTilesByDirection(Direction direction) {
-
+		LinkedHashMap<Coordinates, Tile> tiles = getTiles();
+		for (Coordinates coord : tiles.keySet()) {
+			Tile tile = tiles.get(coord);
+			if (!tile.isZero()) {
+				Coordinates targetCoord = getTargetMovement(coord, direction);
+				Tile targetTile = getTile(targetCoord);
+				if (targetTile != null && targetTile.getValue() == tile.getValue()) {
+					targetTile.mergeWith(tile);
+					tile.reset();
+				}
+			}
+		}
 	}
 	
-	public HashMap<Coordinates, Tile> getTilesByCoordinates() {
-		HashMap<Coordinates, Tile> mapOfTiles = new HashMap<>();
+	public LinkedHashMap<Coordinates, Tile> getTiles() {
+		LinkedHashMap<Coordinates, Tile> mapOfTiles = new LinkedHashMap<>();
 		for (int y = 0; y < maxY; y++) {
 			for (int x = 0; x < maxX; x++) {
 				Tile tile = field[y][x];
-				if (!tile.isZero()) {
-					Coordinates coord = new Coordinates(x, y);
-					mapOfTiles.put(coord, tile);
-				}
+				Coordinates coord = new Coordinates(x, y);
+				mapOfTiles.put(coord, tile);
 			}
 		}
 		return mapOfTiles;

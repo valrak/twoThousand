@@ -3,6 +3,8 @@ package twoThousand;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.LinkedHashMap;
+
 import org.junit.Test;
 
 import constants.Constants.Direction;
@@ -10,13 +12,12 @@ import models.Coordinates;
 import models.GameField;
 import models.Tile;
 
-public class FieldTest {
+public class GameFieldTest {
 
 	@Test
 	public void testGetTileFromField() {
 		GameField field = new GameField(4, 2);
 		assertEquals(0, field.getTile(0, 0).getValue());
-		// TODO: null object pattern
 		assertEquals(null, field.getTile(5, 0));
 	}
 	
@@ -111,6 +112,14 @@ public class FieldTest {
 		assertEquals(new Coordinates(1, 2), targetMovement);
 		targetMovement = field.getTargetMovement(new Coordinates(1, 2), Direction.RIGHT);
 		assertEquals(new Coordinates(2, 2), targetMovement);
+	}
+	
+	@Test
+	public void testGetTiles() {
+		GameField field = prepareField();
+		LinkedHashMap<Coordinates, Tile> tiles = field.getTiles();
+		assertEquals(1, tiles.get(new Coordinates(0, 0)).getValue());
+		assertEquals(20, tiles.get(new Coordinates(3, 4)).getValue());
 	}
 
 }
