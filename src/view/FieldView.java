@@ -1,7 +1,7 @@
 package view;
 
-import rules.Field;
+import models.GameField;
 
 public interface FieldView {
-	public void displayField(Field field);
+	public void displayField(GameField field);
 }

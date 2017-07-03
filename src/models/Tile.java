@@ -1,4 +1,4 @@
-package rules;
+package models;
 
 public class Tile {
 	
@@ -28,11 +28,12 @@ public class Tile {
 	}
 	
 	/**
-	 * Merge tile with other tile. The other tile will be reset to zero 
+	 * Merge tile with other tile.  
 	 * @param otherTile
 	 * @return int of new value of the tile
 	 */
 	public int mergeWith(Tile otherTile) {
+		value += otherTile.getValue();
 		return value;
 	}
 	

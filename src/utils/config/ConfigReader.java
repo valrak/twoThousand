@@ -1,6 +1,6 @@
 package utils.config;
 
-import rules.GameParameters;
+import models.GameParameters;
 
 public interface ConfigReader {
 	public GameParameters readConfig();

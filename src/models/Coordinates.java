@@ -1,4 +1,4 @@
-package rules;
+package models;
 
 import static constants.Constants.*;
 

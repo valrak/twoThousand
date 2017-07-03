@@ -1,13 +1,12 @@
-package rules;
-
-import static constants.Constants.*;
+package models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import constants.Constants.Direction;
 
-public class Field {
+public class GameField {
 
 	private Tile[][] field;
 
@@ -23,7 +22,7 @@ public class Field {
 	 * @param maxX x axis dimension 
 	 * @param maxY y axis dimension
 	 */
-	public Field(int maxX, int maxY) {
+	public GameField(int maxX, int maxY) {
 		this.maxX = maxX;
 		this.maxY = maxY;
 		field = new Tile[maxY][maxX];
@@ -139,7 +138,7 @@ public class Field {
 		Coordinates potentialTarget = new Coordinates(coordinates.getArray());
 		switch (direction) {
 		case UP:
-			for (int i = coordinates.getY() - 1; i <= 0; i--) {
+			for (int i = coordinates.getY() - 1; i >= 0; i--) {
 				Coordinates targetCoord = new Coordinates(coordinates.getX(), i); 
 				MovementDecision decision = doStopMovement(targetCoord, currentTile.getValue());
 				if (decision == MovementDecision.CONTINUE) {
@@ -155,7 +154,7 @@ public class Field {
 			}
 			return potentialTarget;
 		case DOWN:
-			for (int i = coordinates.getY() + 1; i >= maxY; i++) {
+			for (int i = coordinates.getY() + 1; i <= maxY; i++) {
 				Coordinates targetCoord = new Coordinates(coordinates.getX(), i); 
 				MovementDecision decision = doStopMovement(targetCoord, currentTile.getValue());
 				if (decision == MovementDecision.CONTINUE) {
@@ -171,7 +170,7 @@ public class Field {
 			}
 			return potentialTarget;
 		case LEFT:
-			for (int i = coordinates.getX() - 1; i <= 0; i--) {
+			for (int i = coordinates.getX() - 1; i >= 0; i--) {
 				Coordinates targetCoord = new Coordinates(i, coordinates.getY()); 
 				MovementDecision decision = doStopMovement(targetCoord, currentTile.getValue());
 				if (decision == MovementDecision.CONTINUE) {
@@ -204,6 +203,24 @@ public class Field {
 			return potentialTarget;
 		}
 		return null;
+	}
+	
+	public void moveTilesByDirection(Direction direction) {
+
+	}
+	
+	public HashMap<Coordinates, Tile> getTilesByCoordinates() {
+		HashMap<Coordinates, Tile> mapOfTiles = new HashMap<>();
+		for (int y = 0; y < maxY; y++) {
+			for (int x = 0; x < maxX; x++) {
+				Tile tile = field[y][x];
+				if (!tile.isZero()) {
+					Coordinates coord = new Coordinates(x, y);
+					mapOfTiles.put(coord, tile);
+				}
+			}
+		}
+		return mapOfTiles;
 	}
 
 	public int getMaxX() {

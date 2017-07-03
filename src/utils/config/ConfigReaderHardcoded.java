@@ -1,6 +1,6 @@
 package utils.config;
 
-import rules.GameParameters;
+import models.GameParameters;
 
 public class ConfigReaderHardcoded implements ConfigReader {
 
