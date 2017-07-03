@@ -1,22 +1,16 @@
 package models;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Random;
-
-import constants.Constants.Direction;
 
 public class GameField {
 
 	private Tile[][] field;
+	private LinkedHashMap<Coordinates, Tile> tiles = new LinkedHashMap<>();
 	
 	private int maxX = 0;
 	private int maxY = 0;
-	
-	private enum MovementDecision {
-		CONTINUE, STOP, MERGE 
-	}
 
 	/**
 	 * Create playfield with these dimensions
@@ -28,6 +22,7 @@ public class GameField {
 		this.maxY = maxY;
 		field = new Tile[maxY][maxX];
 		clearField();
+		tiles = populateTiles();
 	}
 
 	/**
@@ -54,24 +49,6 @@ public class GameField {
 			return field[coord.getY()][coord.getX()];
 		} catch (ArrayIndexOutOfBoundsException e) {
 			return null;
-		}
-	}
-
-	public boolean setTile(Coordinates coord, Tile tile) {
-		try {
-			field[coord.getY()][coord.getX()] = tile;
-			return true;
-		} catch (ArrayIndexOutOfBoundsException e) {
-			return false;
-		}
-	}
-	
-	public boolean setTile(int x, int y, Tile tile) {
-		try {
-			field[y][x] = tile;
-			return true;
-		} catch (ArrayIndexOutOfBoundsException e) {
-			return false;
 		}
 	}
 
@@ -109,117 +86,12 @@ public class GameField {
 		Coordinates randomKey = coordsList.get(random.nextInt(coordsList.size()));
 		return randomKey;
 	}
-
-	private MovementDecision doStopMovement(Coordinates targetCoord, int currentTileValue) {
-		Tile targetTile = getTile(targetCoord);
-		// empty space, continue with search
-		if (targetTile == null || targetTile.getValue() == 0) {
-			return MovementDecision.CONTINUE;
-		}
-		else {
-			// if both tiles are of same value, they will merge together
-			if (targetTile.getValue() == currentTileValue) {
-				return MovementDecision.MERGE;
-			}
-			// tile is occupied with something else
-			return MovementDecision.STOP;
-		}
-	}
 	
 	/**
-	 * Finds where tile can be moved by chosen direction.
-	 * @param coordinates coordinates of the tile to be moved
-	 * @param direction direction of the movement
-	 * @return Coordinates of the ending point of the tile movement
+	 * Iterate through field and return tile references in linked hashmap
+	 * @return LinkedHashMap<Coordinates, Tile>
 	 */
-	public Coordinates getTargetMovement(Coordinates coordinates, Direction direction) {
-		Tile currentTile = getTile(coordinates);
-		Coordinates potentialTarget = new Coordinates(coordinates.getArray());
-		switch (direction) {
-		case UP:
-			for (int i = coordinates.getY() - 1; i >= 0; i--) {
-				Coordinates targetCoord = new Coordinates(coordinates.getX(), i); 
-				MovementDecision decision = doStopMovement(targetCoord, currentTile.getValue());
-				if (decision == MovementDecision.CONTINUE) {
-					potentialTarget = targetCoord;
-				}
-				else if (decision == MovementDecision.MERGE) {
-					potentialTarget = targetCoord;
-					return potentialTarget;
-				}
-				else {
-					return potentialTarget;
-				}
-			}
-			return potentialTarget;
-		case DOWN:
-			for (int i = coordinates.getY() + 1; i <= maxY; i++) {
-				Coordinates targetCoord = new Coordinates(coordinates.getX(), i); 
-				MovementDecision decision = doStopMovement(targetCoord, currentTile.getValue());
-				if (decision == MovementDecision.CONTINUE) {
-					potentialTarget = targetCoord;
-				}
-				else if (decision == MovementDecision.MERGE) {
-					potentialTarget = targetCoord;
-					return potentialTarget;
-				}
-				else {
-					return potentialTarget;
-				}
-			}
-			return potentialTarget;
-		case LEFT:
-			for (int i = coordinates.getX() - 1; i >= 0; i--) {
-				Coordinates targetCoord = new Coordinates(i, coordinates.getY()); 
-				MovementDecision decision = doStopMovement(targetCoord, currentTile.getValue());
-				if (decision == MovementDecision.CONTINUE) {
-					potentialTarget = targetCoord;
-				}
-				else if (decision == MovementDecision.MERGE) {
-					potentialTarget = targetCoord;
-					return potentialTarget;
-				}
-				else {
-					return potentialTarget;
-				}
-			}
-			return potentialTarget;
-		case RIGHT:
-			for (int i = coordinates.getX() + 1; i <= maxX; i++) {
-				Coordinates targetCoord = new Coordinates(i, coordinates.getY()); 
-				MovementDecision decision = doStopMovement(targetCoord, currentTile.getValue());
-				if (decision == MovementDecision.CONTINUE) {
-					potentialTarget = targetCoord;
-				}
-				else if (decision == MovementDecision.MERGE) {
-					potentialTarget = targetCoord;
-					return potentialTarget;
-				}
-				else {
-					return potentialTarget;
-				}
-			}
-			return potentialTarget;
-		}
-		return null;
-	}
-	
-	public void moveTilesByDirection(Direction direction) {
-		LinkedHashMap<Coordinates, Tile> tiles = getTiles();
-		for (Coordinates coord : tiles.keySet()) {
-			Tile tile = tiles.get(coord);
-			if (!tile.isZero()) {
-				Coordinates targetCoord = getTargetMovement(coord, direction);
-				Tile targetTile = getTile(targetCoord);
-				if (targetTile != null && targetTile.getValue() == tile.getValue()) {
-					targetTile.mergeWith(tile);
-					tile.reset();
-				}
-			}
-		}
-	}
-	
-	public LinkedHashMap<Coordinates, Tile> getTiles() {
+	private LinkedHashMap<Coordinates, Tile> populateTiles() {
 		LinkedHashMap<Coordinates, Tile> mapOfTiles = new LinkedHashMap<>();
 		for (int y = 0; y < maxY; y++) {
 			for (int x = 0; x < maxX; x++) {
@@ -237,5 +109,9 @@ public class GameField {
 
 	public int getMaxY() {
 		return maxY;
+	}
+	
+	public LinkedHashMap<Coordinates, Tile> getTiles() {
+		return tiles;
 	}
 }

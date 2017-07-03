@@ -37,5 +37,11 @@ public interface Rules {
 	 * @param direction direction of the movement
 	 * @return Coordinates of the ending point of the tile movement
 	 */
-	public Coordinates getTargetMovement(Coordinates coordinates, Direction direction);
+	public Coordinates getTargetMovement(Coordinates coordinates, Direction direction, GameField field);
+	
+	/**
+	 * Create new tile at random location in play field
+	 * @return Coordinates of newly created tile
+	 */
+	public Coordinates generateTile(GameField field);
 }
