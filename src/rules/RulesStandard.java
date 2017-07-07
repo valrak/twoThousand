@@ -1,18 +1,24 @@
 package rules;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import constants.Constants.Direction;
 import models.Coordinates;
 import models.GameField;
 import models.Tile;
+import view.EventsListener;
 
 public class RulesStandard extends Rules {
 
 	private int INITIAL_VALUE = 2;
+
+	private List<EventsListener> listeners = new ArrayList<>();
 	
+	public void addListener(EventsListener newListener) {
+		listeners.add(newListener);
+	}
 	/**
 	 * Standard game of 2048 consists of 4x4 dimension game field.
 	 */
@@ -243,7 +249,10 @@ public class RulesStandard extends Rules {
 	public void playerMove(Direction direction) {
 		int moves = moveTilesByDirection(direction);
 		if (moves != 0) {
-			generateTile();
+			Coordinates newTileCoord = generateTile();
+			for (EventsListener listener : listeners) {
+				listener.newTileEvent(newTileCoord);
+			}
 		}
 	}
 }

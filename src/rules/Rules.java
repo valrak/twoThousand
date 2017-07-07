@@ -3,6 +3,7 @@ package rules;
 import constants.Constants.Direction;
 import models.Coordinates;
 import models.GameField;
+import view.EventsListener;
 
 /**
  * 
@@ -59,6 +60,12 @@ public abstract class Rules {
 	 * @param direction
 	 */
 	public abstract void playerMove(Direction direction);
+	
+	/**
+	 * Listener support for view components
+	 * @param newListener
+	 */
+	public abstract void addListener(EventsListener newListener);
 	
 	public GameField getField() {
 		return field;
