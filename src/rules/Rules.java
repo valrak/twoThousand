@@ -9,27 +9,31 @@ import models.GameField;
  * Interface governing game rules
  *
  */
-public interface Rules {
+public abstract class Rules {
+	
+	GameField field;
+	
 	/**
 	 * Moves all tiles in the game field to one specified direction.
 	 * @param field game field
 	 * @param direction
+	 * @return how many tile moves were made on board
 	 */
-	public void moveTilesByDirection(GameField field, Direction direction);
+	abstract int moveTilesByDirection(Direction direction);
 	
 	/**
 	 * Check if the game is lost or can continue.
 	 * @param field game field
 	 * @return boolean, true if the game can continue, false if it is lost
 	 */
-	public boolean isLost(GameField field);
+	abstract boolean isLost();
 	
 	/**
 	 * Get the current score value
 	 * @param field game field
 	 * @return int score
 	 */
-	public int getScore(GameField field);
+	abstract int getScore();
 
 	/**
 	 * Finds where tile can be moved by chosen direction.
@@ -37,11 +41,30 @@ public interface Rules {
 	 * @param direction direction of the movement
 	 * @return Coordinates of the ending point of the tile movement
 	 */
-	public Coordinates getTargetMovement(Coordinates coordinates, Direction direction, GameField field);
+	abstract Coordinates getTargetMovement(Coordinates coordinates, Direction direction);
 	
 	/**
 	 * Create new tile at random location in play field
 	 * @return Coordinates of newly created tile
 	 */
-	public Coordinates generateTile(GameField field);
+	abstract Coordinates generateTile();
+
+	/**
+	 * Prepare new game field
+	 */
+	public abstract void newGame();
+	
+	/**
+	 * Player made move call
+	 * @param direction
+	 */
+	public abstract void playerMove(Direction direction);
+	
+	public GameField getField() {
+		return field;
+	}
+
+	public void setField(GameField field) {
+		this.field = field;
+	}
 }

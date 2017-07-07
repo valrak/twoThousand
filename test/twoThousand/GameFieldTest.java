@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 
 import org.junit.Test;
 
-import constants.Constants.Direction;
 import models.Coordinates;
 import models.GameField;
 import models.Tile;

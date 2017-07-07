@@ -25,6 +25,21 @@ public class GameField {
 		tiles = populateTiles();
 	}
 
+	/** create copy of gamefield
+	 * 
+	 * @param gameField
+	 */
+	public GameField(GameField gamefield) {
+		this.maxX = gamefield.maxX;
+		this.maxY = gamefield.maxY;
+		field = new Tile[maxY][maxX];
+		for (int y = 0; y < maxY; y++) {
+			for (int x = 0; x < maxX; x++) {
+				this.field[y][x] = new Tile(gamefield.field[y][x]);
+			}
+		}
+	}
+	
 	/**
 	 * Clear the playfield - all Tiles will be at default value
 	 */

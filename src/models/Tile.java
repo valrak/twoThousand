@@ -12,6 +12,10 @@ public class Tile {
 		this.value = value;
 	}
 	
+	public Tile(Tile tile) {
+		this.value = tile.value;
+	}
+	
 	public int getValue() {
 		return value;
 	}
