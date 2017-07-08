@@ -1,6 +1,5 @@
 package view;
 
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -9,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -65,9 +65,10 @@ public class FieldViewSwing implements FieldView, EventsListener, ActionListener
 		newGameButton.addActionListener(this);
 		newGameButton.setActionCommand("newGame");
 		newGameButton.setFocusable(false);
-		
-		
 		gameFieldPanel.setField(field);
+		
+		container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
+		controls.setLayout(new BoxLayout(controls, BoxLayout.PAGE_AXIS));
 		controls.add(newGameButton);
 		controls.add(scoreLabel);
 		gameFieldPanel.addKeyListener(new KeyListener() {
@@ -99,7 +100,6 @@ public class FieldViewSwing implements FieldView, EventsListener, ActionListener
 		});
 
 		frame.add(container);
-		container.setLayout(new GridLayout(1, 2));
 		container.add(gameFieldPanel);
 		container.add(controls);
 		gameFieldPanel.setFocusable(true);
@@ -109,7 +109,14 @@ public class FieldViewSwing implements FieldView, EventsListener, ActionListener
 	}
 	
 	public void update() {
-		scoreLabel.setText("Score: " + gameRules.getScore());
+		String scoreText = "";
+		if (gameRules.isLost()) {
+			scoreText = "You Lost! Final score: " + gameRules.getScore();
+		}
+		else {
+			scoreText = "Score: " + gameRules.getScore();
+		}
+		scoreLabel.setText(scoreText);
 	}
 
 	public void playerMoveTilesEvent(Direction direction) {
@@ -127,8 +134,8 @@ public class FieldViewSwing implements FieldView, EventsListener, ActionListener
 	public void actionPerformed(ActionEvent e) {
 		if ("newGame".equals(e.getActionCommand())) {
 			gameRules.newGame();
-			displayField();
 			update();
+			displayField();
 		}
 	}
 }

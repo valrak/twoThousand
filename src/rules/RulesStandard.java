@@ -103,7 +103,7 @@ public class RulesStandard extends Rules {
 		return movesCounter;
 	}
 
-	boolean isLost() {
+	public boolean isLost() {
 		LinkedHashMap<Coordinates, Tile> tiles = field.getTiles();
 		for (Coordinates key : tiles.keySet()) {
 			if (tiles.get(key).isZero()) {

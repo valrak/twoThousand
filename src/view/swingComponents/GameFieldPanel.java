@@ -34,7 +34,7 @@ public class GameFieldPanel extends JPanel {
 	}
 
 	public Dimension getPreferredSize() {
-		return new Dimension(700, 500);
+		return new Dimension(500, 500);
 		
 	}
 	

@@ -27,7 +27,7 @@ public abstract class Rules {
 	 * @param field game field
 	 * @return boolean, true if the game can continue, false if it is lost
 	 */
-	abstract boolean isLost();
+	public abstract boolean isLost();
 	
 	/**
 	 * Get the current score value
