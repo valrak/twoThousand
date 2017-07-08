@@ -1,12 +1,18 @@
 package view;
 
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import constants.Constants.Direction;
@@ -15,11 +21,15 @@ import models.GameField;
 import rules.Rules;
 import view.swingComponents.GameFieldPanel;
 
-public class FieldViewSwing implements FieldView, EventsListener {
+public class FieldViewSwing implements FieldView, EventsListener, ActionListener {
 
 	Rules gameRules;
 	JFrame frame;
-	GameFieldPanel panel;
+	GameFieldPanel gameFieldPanel;
+	JPanel container;
+	JPanel controls;
+	JLabel scoreLabel;
+	JButton newGameButton;
 
 	FieldViewSwing(Rules gameRules) {
 		this.gameRules = gameRules;
@@ -41,15 +51,26 @@ public class FieldViewSwing implements FieldView, EventsListener {
 
 	public void initialize(GameField field) {
 		frame = new JFrame("Two thousand");
+		container = new JPanel();
+		controls = new JPanel();
+		gameFieldPanel = new GameFieldPanel();
 		try {
 			frame.setIconImage(ImageIO.read(new File("resources/icon.png")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		panel = new GameFieldPanel();
-		panel.setField(field);
-		panel.addKeyListener(new KeyListener() {
+		scoreLabel = new JLabel("Score: " + gameRules.getScore(), JLabel.RIGHT);
+		newGameButton = new JButton("New Game");
+		newGameButton.addActionListener(this);
+		newGameButton.setActionCommand("newGame");
+		newGameButton.setFocusable(false);
+		
+		
+		gameFieldPanel.setField(field);
+		controls.add(newGameButton);
+		controls.add(scoreLabel);
+		gameFieldPanel.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {
 			}
@@ -77,21 +98,37 @@ public class FieldViewSwing implements FieldView, EventsListener {
 			}
 		});
 
-		frame.add(panel);
-		panel.setFocusable(true);
-		panel.requestFocusInWindow();
+		frame.add(container);
+		container.setLayout(new GridLayout(1, 2));
+		container.add(gameFieldPanel);
+		container.add(controls);
+		gameFieldPanel.setFocusable(true);
+		gameFieldPanel.requestFocusInWindow();
 		frame.pack();
 		frame.setVisible(true);
+	}
+	
+	public void update() {
+		scoreLabel.setText("Score: " + gameRules.getScore());
 	}
 
 	public void playerMoveTilesEvent(Direction direction) {
 		gameRules.playerMove(direction);
 		displayField();
-
+		update();
 	}
 
 	@Override
 	public void newTileEvent(Coordinates coord) {
-		panel.registerNewTile(coord);
+		gameFieldPanel.registerNewTile(coord);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if ("newGame".equals(e.getActionCommand())) {
+			gameRules.newGame();
+			displayField();
+			update();
+		}
 	}
 }

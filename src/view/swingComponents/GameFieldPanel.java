@@ -10,7 +10,6 @@ import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import models.Coordinates;
@@ -18,6 +17,8 @@ import models.GameField;
 import models.Tile;
 
 public class GameFieldPanel extends JPanel {
+
+	private static final long serialVersionUID = 1L;
 
 	private int PADDING = 4;
 	
@@ -32,12 +33,8 @@ public class GameFieldPanel extends JPanel {
 		this.field = field;
 	}
 
-	public GameFieldPanel() {
-		setBorder(BorderFactory.createLineBorder(Color.black));
-	}
-
 	public Dimension getPreferredSize() {
-		return new Dimension(250, 200);
+		return new Dimension(700, 500);
 		
 	}
 	

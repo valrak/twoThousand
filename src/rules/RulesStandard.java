@@ -129,7 +129,7 @@ public class RulesStandard extends Rules {
 		return true;
 	}
 
-	int getScore() {
+	public int getScore() {
 		int score = 0;
 		LinkedHashMap<Coordinates, Tile> tiles = field.getTiles();
 		for (Coordinates key : tiles.keySet()) {

@@ -34,7 +34,7 @@ public abstract class Rules {
 	 * @param field game field
 	 * @return int score
 	 */
-	abstract int getScore();
+	public abstract int getScore();
 
 	/**
 	 * Finds where tile can be moved by chosen direction.
